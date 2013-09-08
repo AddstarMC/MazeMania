@@ -82,7 +82,7 @@ public class ConfigUtil {
 			Util.debug("Trying to create file: " + confName);
 			try {
 				boolean success = false;
-				InputStream templateIn = plugin.getResource("resources" + File.separator + templateName + ".yml");
+				InputStream templateIn = plugin.getResource(templateName + ".yml");
 				OutputStream outStream = new FileOutputStream(file);
 
                                 byte[] bytes = new byte[1024];
