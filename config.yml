@@ -1,0 +1,83 @@
+#Config
+#Version later to be used to maintain config
+version: 1.4.0
+
+############### GENERAL ##############
+#How long to wait for players to join in seconds
+waitingDelay: 20
+
+#Mob delay, interval to spawn mobs near players
+mobDelay: 7
+
+#Maximum mobs in arena
+maxMobs: 15
+
+#Time in seconds to protect the player on spawn
+#Set to 0 to have no protection time
+noDamageDelay: 10
+
+#Minimum amount of players needed to join
+minimumPlayers: 2
+
+#Maximum amount of players allowed, 0 for no limit
+maximumPlayers: 0
+
+#Player starting items, rotten flesh by default ;)
+startingItems:
+- 367
+
+############### GAME TYPE ##############
+#The game mode type for the arena
+#Values: "collectItems", "findBlock"
+mode: "collectItems"
+
+#Item to collect to win the maze, (must get to exit with the item)
+#The item name is from the Material type list in Bukkit
+###Used in mode "collectItems" only###
+itemToCollect: GOLD_NUGGET
+
+#The amount of the item above to collect
+###Used in mode "collectItems" only###
+itemAmountToCollect: 10
+
+#The block you must find
+###Used in mode "findBlock" only###
+blockMaterial: GOLD_BLOCK
+
+############### REWARDS ##############
+#Economy rewards (requires Vault)
+economy_rewards: true
+
+#Amount to reward
+economy_reward_amount: 20.0
+
+#Item Rewards
+item_rewards: true
+
+#Item names and amounts
+#ItemName:Amount
+item_reward_list:
+ - IRON_BLOCK:1
+
+############### OTHER ##############
+#Allow joining even when a game is in progress
+joinWhenever: true
+
+#Random spawn
+randomSpawn: true
+
+#On death players spawn inside maze again
+#Only way out is leave or win
+noDeath: true
+
+#Allow pvp in arena
+#To allow pvp you must also enable in server.properties
+allowPvP: true
+
+#uses separate player chat for maze players
+#note that this will use players' usernames, not displaynames
+useSeparatePlayerChat: false
+
+#Notify players of activities of other players
+#collection of nuggets or loot will be broadcast to all players in maze if this is true
+notifyLoot: false

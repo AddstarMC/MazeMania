@@ -1,0 +1,20 @@
+name: MazeMania
+author: PlugMania
+main: info.plugmania.mazemania.MazeMania
+version: 1.4.1-adam
+softdepend: [Vault]
+description: MazeMania is a mix of arena, added a bit of mobarena and spiced with some sweet thinking of PlugMania devs.
+commands:
+  maze:
+    usage: /maze
+    description: Root command
+permissions:
+    mazemania.*:
+        description: Allows you to use all the commands
+        default: op
+    mazemania.admin:
+        description: Allows the user to setup the maze
+        default: op
+    mazemania.use:
+        description: Allows anyone to use the maze
+        default: true
