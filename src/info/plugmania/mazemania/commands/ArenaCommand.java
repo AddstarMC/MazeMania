@@ -340,7 +340,7 @@ public class ArenaCommand {
 		p.getInventory().setArmorContents(null);
 
 		p.setHealth(p.getMaxHealth());
-		p.setFoodLevel(p.getMaxHealth());
+		p.setFoodLevel(20);
 		p.setGameMode(GameMode.SURVIVAL);
 
 		// Set the initial inventory loadout

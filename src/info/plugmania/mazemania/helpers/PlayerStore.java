@@ -35,6 +35,6 @@ public ItemStack[] openChest;
 
 	public GameMode gm;
 
-	public int health;
+	public double health;
 	public int hunger;
 }
