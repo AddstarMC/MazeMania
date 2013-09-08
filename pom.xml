@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>MazeMania</groupId>
   <artifactId>MazeMania</artifactId>
-  <version>1.4.1-adam</version>
+  <version>1.4.0.1-adam</version>
   <name>MazeMania</name>
 
   <repositories>
