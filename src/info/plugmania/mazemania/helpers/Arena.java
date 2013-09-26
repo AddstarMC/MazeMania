@@ -138,8 +138,16 @@ public class Arena {
 	public void addSpawn(Location loc) {
 		spawns.add(loc);
 		List <String> loclist = new ArrayList<String>();
+		Util.log.info("Spawns: " + spawns.size());
 		for (Location l : spawns) {
+			Util.log.info("Loc: " + l); 
 			loclist.add(Util.Loc2Str(l));
+		}
+
+
+		Util.log.info("Strings: " + loclist.size());
+		for (String l : loclist) {
+			Util.log.info("String: " + l); 
 		}
 		dbConf.set("arena.spawns", loclist);
 	}
