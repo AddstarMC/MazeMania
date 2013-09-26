@@ -75,6 +75,11 @@ public class SetCommand {
 				plugin.arena.setSpawn(loc);
 				player.sendMessage(Util.formatMessage("Arena spawn position set."));
 				return true;
+			} else if (args[1].equalsIgnoreCase("addspawn")) {
+				Location loc = player.getLocation();
+				plugin.arena.addSpawn(loc);
+				player.sendMessage(Util.formatMessage("Arena spawn position added."));
+				return true;
 			} else if (args[1].equalsIgnoreCase("exit")) {
 				Location loc = player.getLocation();
 				plugin.arena.setExit(loc);

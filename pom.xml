@@ -31,12 +31,6 @@
       <id>addstar-repo</id>
       <url>http://maven.addstar.com.au/artifactory/ext-release-local</url>
     </repository>
-    
-    <!-- mcstats repo -->
-    <repository>
-      <id>Plugin Metrics</id>
-      <url>http://repo.mcstats.org/content/repositories/public</url>
-    </repository>
   </repositories>
 
   <dependencies>
@@ -44,7 +38,7 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.6.2-R0.2-SNAPSHOT</version>
+      <version>1.6.4-R0.1-SNAPSHOT</version>
     </dependency>
     
     <!-- CraftBukkit Dependency for experimental features

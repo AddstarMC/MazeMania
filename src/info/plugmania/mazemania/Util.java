@@ -28,7 +28,8 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -101,6 +102,34 @@ public class Util {
 		for(Player p:plugin.arena.playing) {
 			p.sendMessage(ChatColor.BLUE + "[MM] " + msg);
 		}
+	}
+	
+	public static String Loc2Str(Location loc) {
+		if (loc == null) { return null; }
+		String result = loc.getWorld().getName() + "," +
+						loc.getX() + "," + 
+						loc.getY() + "," +
+						loc.getZ() + "," +
+						loc.getYaw() + "," +
+						loc.getPitch();
+		
+		return result; 
+	}
+	
+	public static Location Str2Loc(String input) {
+		if (input == null) { return null; }
+
+		Location loc;
+		String[] parts = input.split(",");
+
+		World world = plugin.getServer().getWorld(parts[0]);
+		loc = new Location(world,
+				Double.parseDouble(parts[1]),
+				Double.parseDouble(parts[2]),
+				Double.parseDouble(parts[3]),
+				Float.parseFloat(parts[4]),
+				Float.parseFloat(parts[5]));
+		return loc;
 	}
 	
 	public boolean hasPermMsg(CommandSender sender, String perm) {
@@ -244,7 +273,7 @@ public class Util {
 			//If the item does not appear after changes
 		    if (!after.containsKey(item.getKey())) {
 		    	String loot = item.getKey().replace("_", " ");
-		    	sub.add(ChatColor.GOLD + "1 " + loot + " " + ChatColor.BLUE);
+		    	sub.add(ChatColor.GREEN + "1 " + loot + " " + ChatColor.BLUE);
 		    }
 		    //If the item is smaller after changes
 		    //else if (item.getValue() > after.get(item.getKey())) sub.add(item.getKey() + "," + (item.getValue() - after.get(item.getKey())));

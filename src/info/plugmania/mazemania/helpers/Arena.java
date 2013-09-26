@@ -52,6 +52,7 @@ public class Arena {
 
 	private Location higherPos;
 	private Location lowerPos;
+	private List<Location> spawns = new ArrayList<Location>();
 
 	public YamlConfiguration dbConf;
 
@@ -64,6 +65,7 @@ public class Arena {
 		dbConf = ConfigUtil.getConfig("db");
 
 		updatePosLocs();
+		loadSpawns();
 		
 		if(dbConf.isSet("triggers")) plugin.TriggerManager.loadTriggers(dbConf.getConfigurationSection("triggers"));
 	}
@@ -112,11 +114,34 @@ public class Arena {
 			plz = pos1Loc.getBlockZ();
 		}
 
-
 		Location higher = new Location(pos1Loc.getWorld(), phx, phy, phz);
 		Location lower = new Location(pos1Loc.getWorld(), plx, ply, plz);
 		higherPos = higher;
 		lowerPos = lower;
+	}
+	
+	public void loadSpawns() {
+		List<String> myspawns = dbConf.getStringList("spawns");
+		spawns.clear();
+		if (myspawns != null) {
+			for (String s : myspawns) {
+				if ((s != null) && (s.length() > 0)) {
+					Location loc = Util.Str2Loc(s);
+					if (loc != null) {
+						spawns.add(loc);
+					}
+				}
+			}
+		}
+	}
+	
+	public void addSpawn(Location loc) {
+		spawns.add(loc);
+		List <String> loclist = new ArrayList<String>();
+		for (Location l : spawns) {
+			loclist.add(Util.Loc2Str(l));
+		}
+		dbConf.set("arena.spawns", loclist);
 	}
 
 	public void setPos1(Location loc) {
@@ -181,7 +206,13 @@ public class Arena {
 	public Location getHigherPos() {
 		return higherPos;
 	}
-
+	
+	public Location getRandomSpawn() {
+		int ran = (int) (Math.random() * spawns.size());
+		return spawns.get(ran);
+	}
+	
+	/*
 	public Location getRandomSpawn() {
 		Location s = getSpawn();
 		int d = 10;
@@ -206,6 +237,7 @@ public class Arena {
 
 		return b.getLocation().add(0.5, 0, 0.5);
 	}
+	*/
 
 	public Location getRandomLocation(Location s, int d) {
 		double dist;
