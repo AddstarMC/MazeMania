@@ -35,24 +35,15 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -60,9 +51,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 
 
 public class PlayerListener implements Listener {
@@ -293,15 +281,20 @@ public class PlayerListener implements Listener {
 		//}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
 
 		// Player respawned in the maze?
 		if (plugin.arena.isInArena(player.getLocation())) {
 			Util.debug(player.getName() + " respawned in maze");
-			if (plugin.arena.store.containsKey(player)) {
+			if (plugin.arena.playing.contains(player)) {
 				// Game is still running
+				PlayerStore ps = plugin.arena.store.get(player);
+				for (Location l : ps.chests.keySet()) {
+					ps.chests.remove(l);
+				}
+				ps.chests.clear();
 				Util.debug(player.getName() + " is still part of the current game.. resume!");
 				Location loc = plugin.arena.getRandomSpawn();
 				event.setRespawnLocation(loc);
@@ -529,7 +522,7 @@ public class PlayerListener implements Listener {
 		
 		// Find the material type and collect mode
 		Material mat = Material.matchMaterial(plugin.mainConf.getString("itemToCollect", "GOLD_NUGGET"));
-		int matid = mat.getId();
+		//int matid = mat.getId();
 		Boolean collectMode = plugin.mainConf.getString("mode", "collectItems").equalsIgnoreCase("collectItems");
 		//Util.log.info("Material required: " + mat.toString() + " (" + matid + ")");
 		//Util.log.info("collectMode: " + collectMode);

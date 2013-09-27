@@ -27,9 +27,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionEffect;
 
@@ -95,7 +93,7 @@ public class ArenaCommand {
 		
 		// Check if we have enough players
 		int minP = plugin.mainConf.getInt("minimumPlayers", 2);
-		if (minP < 2) minP = 2;
+		//if (minP < 2) minP = 2;
 		//if (plugin.debug) minP = 1;
 		final int minPlayers = minP;
 
@@ -141,36 +139,39 @@ public class ArenaCommand {
 				plugin.arena.waiting.remove(player);
 			}
 
-			player.getInventory().clear();
+			// Don't try to teleport dead players.. it causes a "no respawn" problem
+			if (!player.isDead()) {
+				player.getInventory().clear();
 
-			Location back = null;
-			if (plugin.arena.store.containsKey(player)) {
-				PlayerStore ps = plugin.arena.store.get(player);
-
-				player.getInventory().setContents(ps.inv.getContents());
-				back = ps.previousLoc;
-				player.setGameMode(ps.gm);
-				player.setFoodLevel(ps.hunger);
-				player.setHealth(ps.health);
-				player.getInventory().setArmorContents(ps.armour);
-			} else {
-				player.setHealth(20);
-			}
+				Location back = null;
+				if (plugin.arena.store.containsKey(player)) {
+					PlayerStore ps = plugin.arena.store.get(player);
+	
+					player.getInventory().setContents(ps.inv.getContents());
+					back = ps.previousLoc;
+					player.setGameMode(ps.gm);
+					player.setFoodLevel(ps.hunger);
+					player.setHealth(ps.health);
+					player.getInventory().setArmorContents(ps.armour);
+				} else {
+					player.setHealth(20);
+				}
 			
-			for (PotionEffect effect : player.getActivePotionEffects()) {
-				player.removePotionEffect(effect.getType());
-			}
-			if (player.getFireTicks() > 0) {
-				player.setFireTicks(0);
-			}
+				for (PotionEffect effect : player.getActivePotionEffects()) {
+					player.removePotionEffect(effect.getType());
+				}
+				if (player.getFireTicks() > 0) {
+					player.setFireTicks(0);
+				}
 
-			if (back == null) {
-				Util.log.info("Back was empty for " + player.getName() + "!");
-				player.sendMessage(Util.formatMessage("Your previous location was not found."));
-				player.teleport(player.getWorld().getSpawnLocation());
-			} else {
-				Util.log.info("Back: " + back.toString());
-				player.teleport(back);
+				if (back == null) {
+					Util.log.info("Back was empty for " + player.getName() + "!");
+					player.sendMessage(Util.formatMessage("Your previous location was not found."));
+					player.teleport(player.getWorld().getSpawnLocation());
+				} else {
+					Util.log.info("Back: " + back.toString());
+					player.teleport(back);
+				}
 			}
 		} else {
 			Util.log.info("Player NOT in match!!");
@@ -201,7 +202,7 @@ public class ArenaCommand {
 
 			// Check if we have enough players
 			int minP = plugin.mainConf.getInt("minimumPlayers", 2);
-			if (minP < 2) minP = 2;
+			//if (minP < 2) minP = 1;
 			//if (plugin.debug) minP = 1;
 			final int minPlayers = minP;
 
@@ -229,7 +230,15 @@ public class ArenaCommand {
 						//Util.log.info("Spawning more mobs!");
 						for (Player p : plugin.arena.playing) {
 							Location l = plugin.arena.getRandomLocation(p.getLocation(), 10);
-							p.getWorld().spawnEntity(l, EntityType.ZOMBIE);
+							EntityType type = EntityType.ZOMBIE;
+							int ran = (int) (Math.random() * 100);
+							if (ran >= 95) {
+								type = EntityType.SPIDER;
+							}
+							else if (ran >= 80) {
+								type = EntityType.SKELETON;
+							}
+							p.getWorld().spawnEntity(l, type);
 						}
 					} else {
 						//Util.log.info("Too many mobs!");

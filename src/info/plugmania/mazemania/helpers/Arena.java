@@ -35,7 +35,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.potion.PotionEffect;
 
 import info.plugmania.mazemania.ConfigUtil;
 import info.plugmania.mazemania.MazeMania;
@@ -324,6 +323,8 @@ public class Arena {
 			if (e.getType().equals(EntityType.ZOMBIE)) { e.remove(); count++; }
 			if (e.getType().equals(EntityType.SPIDER)) { e.remove(); count++; }
 			if (e.getType().equals(EntityType.CAVE_SPIDER)) { e.remove(); count++; }
+			if (e.getType().equals(EntityType.SKELETON)) { e.remove(); count++; }
+			if (e.getType().equals(EntityType.CREEPER)) { e.remove(); count++; }
 		}
 		Util.log.info("Removed " + count + " mobs from maze arena");
 	}
@@ -336,6 +337,8 @@ public class Arena {
 			if (e.getType().equals(EntityType.ZOMBIE)) { count++; continue; }
 			if (e.getType().equals(EntityType.SPIDER)) { count++; continue; }
 			if (e.getType().equals(EntityType.CAVE_SPIDER)) { count++; continue; }
+			if (e.getType().equals(EntityType.SKELETON)) { count++; continue; }
+			if (e.getType().equals(EntityType.CREEPER)) { count++; continue; }
 		}
 		return count;
 	}
@@ -419,7 +422,7 @@ public class Arena {
 			
 			// Check that we still have enough players (people can leave during countdown)
 			int minP = plugin.mainConf.getInt("minimumPlayers", 2);
-			if (minP < 2) minP = 2;
+			//if (minP < 2) minP = 1;
 			final int minPlayers = minP;
 			if (plugin.arena.waiting.size() < minP) {
 				Bukkit.getScheduler().cancelTask(plugin.mazeCommand.arenaCommand.scheduleId);
