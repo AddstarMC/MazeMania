@@ -121,7 +121,7 @@ public class Arena {
 	}
 	
 	public void loadSpawns() {
-		List<String> myspawns = dbConf.getStringList("spawns");
+		List<String> myspawns = dbConf.getStringList("arena.spawns");
 		spawns.clear();
 		if (myspawns != null) {
 			for (String s : myspawns) {
@@ -138,18 +138,15 @@ public class Arena {
 	public void addSpawn(Location loc) {
 		spawns.add(loc);
 		List <String> loclist = new ArrayList<String>();
-		Util.log.info("Spawns: " + spawns.size());
 		for (Location l : spawns) {
-			Util.log.info("Loc: " + l); 
-			loclist.add(Util.Loc2Str(l));
+			String s = Util.Loc2Str(l);
+			if ((s != null) && (s.length() > 0)) {
+				loclist.add(s);
+			}
 		}
 
-
-		Util.log.info("Strings: " + loclist.size());
-		for (String l : loclist) {
-			Util.log.info("String: " + l); 
-		}
 		dbConf.set("arena.spawns", loclist);
+		ConfigUtil.saveConfig(dbConf, "db");
 	}
 
 	public void setPos1(Location loc) {

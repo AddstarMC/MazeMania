@@ -90,6 +90,7 @@ public class PlayerListener implements Listener {
 	}
 	*/
 
+	/*
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (!plugin.arena.gameActive) return;
@@ -100,19 +101,6 @@ public class PlayerListener implements Listener {
 		if(plugin.getServer().getPlayer(player.getName()).getHealth()-event.getDamage()<=1) {
 
 			String killer = "";
-/*
-			if(event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
-				if(event.getDamager() instanceof Player) {
-					Player damager = (Player) event.getDamager();
-					killer = damager.getDisplayName();
-				}
-				else {
-					LivingEntity entity = (LivingEntity) event.getDamager();
-					killer = entity.getType().getName();
-				}
-			} else {
-			}
-*/
 			killer = event.getCause().name().toLowerCase();
 			if (killer == "fire_tick") { killer = "fire"; }
 			
@@ -259,6 +247,7 @@ public class PlayerListener implements Listener {
 			}
 		}
 	}
+	*/
 
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
@@ -267,15 +256,18 @@ public class PlayerListener implements Listener {
 		Player player = event.getEntity();
 		if (!plugin.arena.playing.contains(player)) return;
 
-		Util.broadcastInside(ChatColor.GOLD + "" + player.getName() + ChatColor.BLUE +  " has died in the maze!");
+		String DeathMsg = event.getDeathMessage();
+		DeathMsg = DeathMsg.replaceFirst(player.getName(), ChatColor.GOLD + player.getName() + ChatColor.BLUE);
+		Util.broadcastInside(DeathMsg);
 		
 		Util.debug("Death Message: " + event.getDeathMessage());
 		Util.debug("Player Name: " + player.getName());
 		Util.debug("Player Location: " + player.getLocation().toString());
 
+		event.setDeathMessage(null);
 		event.getDrops().clear();
 		event.setDroppedExp(0);
-		plugin.arena.removePlayer(player);
+		//plugin.arena.removePlayer(player);
 		
 		/*
 		if (plugin.arena.playing.size() == 1) {
@@ -294,26 +286,38 @@ public class PlayerListener implements Listener {
 			event.getEntity().sendMessage(Util.formatMessage("The MazeMania game was forfeited, all players left!"));
 		}
 		*/
-		
-		if (plugin.arena.playing.isEmpty()) {
-			event.getEntity().sendMessage(Util.formatMessage("The game was forfeited, all players left!"));
-		}
+
+		// TODO: Look into this.. might be good
+		//if (plugin.arena.playing.isEmpty()) {
+		//	event.getEntity().sendMessage(Util.formatMessage("The game was forfeited, all players left!"));
+		//}
 	}
 
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
-		if (!plugin.arena.store.containsKey(player)) return;
-	
-		Location back = plugin.arena.restorePlayer(player);
-		if (back == null) {
-			player.sendMessage(Util.formatMessage("Your previous location was not found."));
-			event.setRespawnLocation(player.getWorld().getSpawnLocation());
-		} else {
-			event.setRespawnLocation(back);
+
+		// Player respawned in the maze?
+		if (plugin.arena.isInArena(player.getLocation())) {
+			Util.debug(player.getName() + " respawned in maze");
+			if (plugin.arena.store.containsKey(player)) {
+				// Game is still running
+				Util.debug(player.getName() + " is still part of the current game.. resume!");
+				Location loc = plugin.arena.getRandomSpawn();
+				event.setRespawnLocation(loc);
+			} else {
+				// Game has ended
+				Util.debug(player.getName() + " is not part of a game.. handle exit");
+				Location back = plugin.arena.restorePlayer(player);
+				if (back == null) {
+					player.sendMessage(Util.formatMessage("Your previous location was not found."));
+					event.setRespawnLocation(player.getWorld().getSpawnLocation());
+				} else {
+					event.setRespawnLocation(back);
+				}
+				plugin.arena.store.remove(player);
+			}
 		}
-	
-		plugin.arena.store.remove(player);
 	}
 
 	@EventHandler
