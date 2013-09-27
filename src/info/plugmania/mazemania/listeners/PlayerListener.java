@@ -295,6 +295,7 @@ public class PlayerListener implements Listener {
 				Util.debug(player.getName() + " is still part of the current game.. resume!");
 				Location loc = plugin.arena.getRandomSpawn();
 				event.setRespawnLocation(loc);
+				plugin.arena.RefreshLoadout(player);
 			} else {
 				// Game has ended
 				Util.debug(player.getName() + " is not part of a game.. handle exit");
