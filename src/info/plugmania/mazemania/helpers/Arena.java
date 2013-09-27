@@ -132,6 +132,7 @@ public class Arena {
 				}
 			}
 		}
+		Util.debug("Loaded " + spawns.size() + " spawns.");
 	}
 	
 	public void addSpawn(Location loc) {
