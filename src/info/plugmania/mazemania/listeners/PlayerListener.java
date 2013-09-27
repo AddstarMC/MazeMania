@@ -291,9 +291,6 @@ public class PlayerListener implements Listener {
 			if (plugin.arena.playing.contains(player)) {
 				// Game is still running
 				PlayerStore ps = plugin.arena.store.get(player);
-				for (Location l : ps.chests.keySet()) {
-					ps.chests.remove(l);
-				}
 				ps.chests.clear();
 				Util.debug(player.getName() + " is still part of the current game.. resume!");
 				Location loc = plugin.arena.getRandomSpawn();
