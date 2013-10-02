@@ -25,10 +25,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import info.plugmania.mazemania.MazeMania;
@@ -230,15 +234,19 @@ public class ArenaCommand {
 						//Util.log.info("Spawning more mobs!");
 						for (Player p : plugin.arena.playing) {
 							Location l = plugin.arena.getRandomLocation(p.getLocation(), 10);
-							EntityType type = EntityType.ZOMBIE;
 							int ran = (int) (Math.random() * 100);
 							if (ran >= 95) {
-								type = EntityType.SPIDER;
+								LivingEntity ent = (LivingEntity) p.getWorld().spawnEntity(l, EntityType.SPIDER);
 							}
 							else if (ran >= 80) {
-								type = EntityType.SKELETON;
+								LivingEntity ent = (LivingEntity) p.getWorld().spawnEntity(l, EntityType.SKELETON);
+								ent.getEquipment().setItemInHand(new ItemStack(Material.BOW));
+								ent.getEquipment().setBoots(new ItemStack(Material.GOLD_BOOTS));
 							}
-							p.getWorld().spawnEntity(l, type);
+							else {
+								LivingEntity ent = (LivingEntity) p.getWorld().spawnEntity(l, EntityType.ZOMBIE);
+								ent.getEquipment().setBoots(new ItemStack(Material.GOLD_BOOTS));
+							}
 						}
 					} else {
 						//Util.log.info("Too many mobs!");
