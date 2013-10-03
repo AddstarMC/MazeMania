@@ -307,6 +307,7 @@ public class ArenaCommand {
 					}
 					p.teleport(spawn);
 				}
+				plugin.arena.RefreshLoadout(p);
 			}
 
 			plugin.arena.waiting.clear();
@@ -353,15 +354,18 @@ public class ArenaCommand {
 
 		//Util.log.info("Set previousLoc: " + ps.previousLoc.toString());
 		
+		p.setGameMode(GameMode.SURVIVAL);
 		p.getInventory().clear();
 		p.getInventory().setArmorContents(null);
-
 		p.setHealth(p.getMaxHealth());
 		p.setFoodLevel(20);
-		p.setGameMode(GameMode.SURVIVAL);
+		p.setFlying(false);
+		p.setAllowFlight(false);
+		p.setWalkSpeed(0.2F);
+        p.setFlySpeed(0.2F);
 
 		// Set the initial inventory loadout
-		plugin.arena.RefreshLoadout(p);
+		//plugin.arena.RefreshLoadout(p);
 
 		if (plugin.mainConf.get("noDamageDelay") != null && plugin.mainConf.getInt("noDamageDelay", 0) != 0) {
 			p.setNoDamageTicks(plugin.mainConf.getInt("noDamageDelay") * 20);
@@ -381,6 +385,7 @@ public class ArenaCommand {
 				}
 				p.teleport(spawn);
 			}
+			plugin.arena.RefreshLoadout(p);
 
 			// Fix for client not showing players after they join
 			for (Player otherplayer : plugin.arena.playing) {

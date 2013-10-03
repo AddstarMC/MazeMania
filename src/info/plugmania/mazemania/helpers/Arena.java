@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -380,13 +381,19 @@ public class Arena {
 
 		Location back = null;
 		PlayerStore ps = plugin.arena.store.get(player);
-		player.getInventory().setContents(ps.inv.getContents());
-		back = ps.previousLoc;
-		player.setGameMode(ps.gm);
+		if (ps != null) {
+			player.getInventory().setContents(ps.inv.getContents());
+			back = ps.previousLoc;
+			player.setFoodLevel(ps.hunger);
+			player.setHealth(ps.health);
+			player.getInventory().setArmorContents(ps.armour);
+		} else {
+			player.getInventory().clear();
+			player.setFoodLevel(20);
+			player.setHealth(20);
+		}
+		player.setGameMode(GameMode.SURVIVAL);
 		player.setSneaking(false);
-		player.setFoodLevel(ps.hunger);
-		player.setHealth(ps.health);
-		player.getInventory().setArmorContents(ps.armour);
 
 		return back;
 	}

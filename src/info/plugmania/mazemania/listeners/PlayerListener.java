@@ -61,7 +61,7 @@ public class PlayerListener implements Listener {
 		plugin = instance;
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled=true)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		if (event.isCancelled()) return;
 		if (event.getMessage().startsWith("/maze")) return;
@@ -78,174 +78,19 @@ public class PlayerListener implements Listener {
 	}
 	*/
 
-	/*
-	@EventHandler
-	public void onEntityDamage(EntityDamageEvent event) {
-		if (!plugin.arena.gameActive) return;
-		if (!plugin.arena.playing.contains(event.getEntity())) return;
-
-		// CHECK IF DAMAGE KILLS PLAYER
-		final Player player = (Player) event.getEntity();
-		if(plugin.getServer().getPlayer(player.getName()).getHealth()-event.getDamage()<=1) {
-
-			String killer = "";
-			killer = event.getCause().name().toLowerCase();
-			if (killer == "fire_tick") { killer = "fire"; }
-			
-			Util.broadcastInside(ChatColor.GOLD + "" + player.getName() + ChatColor.BLUE +  " died from " + ChatColor.GOLD + killer);
-			
-			// CHECK FOR KEEP SPAWNING IN MAZE
-			if (plugin.getConfig().getBoolean("noDeath")) {
-				if (plugin.mainConf.getBoolean("randomSpawn", true)) {
-					player.teleport(plugin.arena.getRandomSpawn());
-					//Util.log.info("[onEntityDamageByEntity] random respawn");
-				} else {
-					//Util.log.info("[onEntityDamageByEntity] standard respawn");
-					Location spawn = plugin.arena.getSpawn();
-					if (spawn == null) {
-						return;
-					}
-					player.teleport(spawn);
-				}
-			}
-			
-			// FIX FOR CLIENT NOT SHOWING ENTITIES
-			for (Player otherplayer: plugin.arena.playing) {
-			    if (otherplayer.canSee(player)) otherplayer.showPlayer(player);	// Make new player visible to others
-			    if (player.canSee(otherplayer)) player.showPlayer(otherplayer);	// Make other players visible to new player
-			}
-			
-			// CANCEL DAMAGE AKA DEATH
-			//Util.log.info("[onEntityDamageByEntity] scheduling player reset");
-			int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				@Override
-				public void run() {
-					//Util.log.info("[onEntityDamageByEntity] fake death");
-					for (PotionEffect effect : player.getActivePotionEffects()) {
-						player.removePotionEffect(effect.getType());
-					}
-					if (player.getFireTicks() > 0) {
-						player.setFireTicks(0);
-					}
-					player.setHealth(20);
-					plugin.arena.RefreshLoadout(player);
-					return;
-				}
-			}, 1L);
-			
-			player.setHealth(20);
-			event.setCancelled(true);
-		}
-	}
-	
-	@EventHandler
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		if (!plugin.arena.gameActive) return;
-		if (!plugin.arena.playing.contains(event.getDamager())) return;
-		if (!plugin.arena.playing.contains(event.getEntity())) return;
-		
-		// Allow PVP within the maze?
-		if (event.getDamager() instanceof Player) {
-			if (event.getEntity() instanceof Player) {
-				if (!plugin.mainConf.getBoolean("allowPvP", true)) {
-					//Util.log.info("[MazeMania] onEntityDamageByEntity: cancelling pvp damage)");
-					event.setCancelled(true);
-				}
-			}
-		}
-
-		// Damage to mob 
-		if (!(event.getEntity() instanceof Player)) { //is a mob
-			if (!plugin.arena.isInArena(event.getEntity().getLocation())) return; //return if not in arena
-			//Util.log.info("[MazeMania] onEntityDamageByEntity (damage to mob in maze)");
-
-			if (!event.getCause().equals(DamageCause.ENTITY_ATTACK)) //make sure the damage was 'natural'
-				event.setCancelled(true);
-		}
-
-		// Simulate a "fake death" if the noDeath option is enabled
-		if(plugin.getConfig().getBoolean("noDeath")) {
-			if(event.getEntity() instanceof Player) {
-				final Player player = (Player) event.getEntity();
-				if(plugin.arena.playing.contains(player)){
-					//Util.log.info("[MazeMania] onEntityDamageByEntity (damage to player in maze)");
-					
-					// CHECK IF DAMAGE KILLS PLAYER
-					if(plugin.getServer().getPlayer(player.getName()).getHealth()-event.getDamage()<=1) {
-	
-						String killer = "";
-						if(event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
-							if(event.getDamager() instanceof Player) {
-								Player damager = (Player) event.getDamager();
-								killer = damager.getDisplayName();
-							}
-							else {
-								LivingEntity entity = (LivingEntity) event.getDamager();
-								killer = entity.getType().getName();
-							}
-						} else {
-							killer = event.getCause().name();
-						}
-						//player.sendMessage(Util.formatMessage("If you want to leave the game type " + ChatColor.GOLD +"/maze leave"));
-						Util.broadcastInside(ChatColor.GOLD + "" + player.getName() + ChatColor.BLUE +  " was killed by " + ChatColor.GOLD + killer + ChatColor.BLUE + "!");
-						
-						// CHECK FOR KEEP SPAWNING IN MAZE
-						if (plugin.getConfig().getBoolean("noDeath")) {
-							if (plugin.mainConf.getBoolean("randomSpawn", true)) {
-								player.teleport(plugin.arena.getRandomSpawn());
-								//Util.log.info("[onEntityDamageByEntity] random respawn");
-							} else {
-								//Util.log.info("[onEntityDamageByEntity] standard respawn");
-								Location spawn = plugin.arena.getSpawn();
-								if (spawn == null) {
-									return;
-								}
-								player.teleport(spawn);
-							}
-						}
-						
-						// FIX FOR CLIENT NOT SHOWING ENTITIES
-						for (Player otherplayer: plugin.arena.playing) {
-						    if (otherplayer.canSee(player)) otherplayer.showPlayer(player);	// Make new player visible to others
-						    if (player.canSee(otherplayer)) player.showPlayer(otherplayer);	// Make other players visible to new player
-						}
-						
-						// CANCEL DAMAGE AKA DEATH
-						//Util.log.info("[onEntityDamageByEntity] scheduling player reset");
-						int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-							@Override
-							public void run() {
-								//Util.log.info("[onEntityDamageByEntity] fake death");
-								for (PotionEffect effect : player.getActivePotionEffects()) {
-									player.removePotionEffect(effect.getType());
-								}
-								if (player.getFireTicks() > 0) {
-									player.setFireTicks(0);
-								}
-								player.setHealth(20);
-								plugin.arena.RefreshLoadout(player);
-								return;
-							}
-						}, 1L);
-						
-						player.setHealth(20);
-						event.setCancelled(true);
-					}
-				}
-			}
-		}
-	}
-	*/
-
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		if (!plugin.arena.gameActive) return;
-		
+
 		Player player = event.getEntity();
 		if (!plugin.arena.playing.contains(player)) return;
 
 		String DeathMsg = event.getDeathMessage();
-		DeathMsg = DeathMsg.replaceFirst(player.getName(), ChatColor.GOLD + player.getName() + ChatColor.BLUE);
+		if (DeathMsg == null) {
+			DeathMsg = ChatColor.GOLD + player.getName() + ChatColor.BLUE + " has died";
+		} else {
+			DeathMsg = DeathMsg.replaceFirst(player.getName(), ChatColor.GOLD + player.getName() + ChatColor.BLUE);
+		}
 		Util.broadcastInside(DeathMsg);
 		
 		Util.debug("Death Message: " + event.getDeathMessage());
@@ -350,7 +195,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled=true)
 	public void onChestInteract(PlayerInteractEvent event) {
 		if (event.isCancelled()) return;
 		if (!plugin.arena.gameActive) return;
@@ -393,7 +238,7 @@ public class PlayerListener implements Listener {
 	}
 */
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled=true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.isCancelled()) return;
 		if (!plugin.arena.gameActive) return;
@@ -440,7 +285,7 @@ public class PlayerListener implements Listener {
 		event.setCancelled(true);
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled=true)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		if (event.isCancelled()) return;
 		if (!plugin.arena.gameActive) return;
@@ -494,7 +339,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled=true)
 	public void InventoryClose(InventoryCloseEvent event) {
 		if (!plugin.arena.gameActive) return;
 		if(!plugin.arena.playing.contains(event.getPlayer())) return;
@@ -560,7 +405,7 @@ public class PlayerListener implements Listener {
 		return ret;
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled=true)
 	public void onTriggers(PlayerMoveEvent event) {
 		if (event.isCancelled()) return;
 		if (!plugin.arena.gameActive) return;
