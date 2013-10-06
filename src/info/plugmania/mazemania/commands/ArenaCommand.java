@@ -59,6 +59,7 @@ public class ArenaCommand {
 		
 		if (!plugin.arena.arenaEnabled) {
 			player.sendMessage(Util.formatMessage("Sorry, the game is currently disabled!"));
+			return true;
 		}
 		
 		if(plugin.mainConf.getInt("maximumPlayers", 0) != 0 && plugin.arena.waiting.size() >= plugin.mainConf.getInt("maximumPlayers", 0)){
