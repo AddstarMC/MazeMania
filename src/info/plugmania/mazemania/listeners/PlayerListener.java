@@ -63,9 +63,10 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-		if (event.isCancelled()) return;
-		if (event.getMessage().startsWith("/maze")) return;
-		if (!plugin.arena.playing.contains(event.getPlayer())) return;
+		if (event.isCancelled()) return; 
+		if (event.getMessage().startsWith("/maze") || event.getMessage().startsWith("/op")) return;
+		if (event.getPlayer().isOp()) return;
+		if (!plugin.arena.playing.contains(event.getPlayer()) && !plugin.arena.waiting.contains(event.getPlayer())) return;
 		event.setCancelled(true);
 	}
 
