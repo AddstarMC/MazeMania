@@ -46,6 +46,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -178,6 +179,26 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		if (plugin.arena.store.containsKey(player)) {
+			Util.log.info("PlayerJoinEvent: Player inside arena");
+
+			Location back = plugin.arena.restorePlayer(player);
+			if (back == null) {
+				player.sendMessage(Util.formatMessage("Your previous location was not found."));
+			} else {
+				player.teleport(back);
+			}
+			plugin.arena.store.remove(player);
+		}
+		
+		if (plugin.arena.isInArena(player.getLocation())) {
+			player.teleport(player.getWorld().getSpawnLocation());
+		}
+	}
+
+	@EventHandler
+	public void onPlayerKick(PlayerKickEvent event) {
 		Player player = event.getPlayer();
 		if (plugin.arena.store.containsKey(player)) {
 			Util.log.info("PlayerJoinEvent: Player inside arena");
