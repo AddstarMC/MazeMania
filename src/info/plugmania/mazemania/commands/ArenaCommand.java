@@ -295,19 +295,27 @@ public class ArenaCommand {
 			
 			// Bring in all queued players
 			for (Player p : plugin.arena.waiting) {
-				// Send player to spawn point
-				plugin.arena.playing.add(p);
-
-				if (plugin.mainConf.getBoolean("randomSpawn", true)) {
-					p.teleport(plugin.arena.getRandomSpawn());
-				} else {
-					Location spawn = plugin.arena.getSpawn();
-					if (spawn == null) {
-						return;
+				if ((p != null) && (p.isOnline())) {
+					// Send player to spawn point
+					plugin.arena.playing.add(p);
+	
+					if (plugin.mainConf.getBoolean("randomSpawn", true)) {
+						p.teleport(plugin.arena.getRandomSpawn());
+					} else {
+						Location spawn = plugin.arena.getSpawn();
+						if (spawn == null) {
+							return;
+						}
+						p.teleport(spawn);
 					}
-					p.teleport(spawn);
+					plugin.arena.RefreshLoadout(p);
+				} else {
+					if (p == null) {
+						Util.log.warning("Null player in waiting list!!");
+					} else {
+						Util.log.warning("Player " + p.getName() + " is in waiting list was offline!");
+					}
 				}
-				plugin.arena.RefreshLoadout(p);
 			}
 
 			plugin.arena.waiting.clear();
