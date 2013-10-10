@@ -302,7 +302,11 @@ public class ArenaCommand {
 	
 					if (plugin.mainConf.getBoolean("randomSpawn", true)) {
 						Location loc = plugin.arena.getRandomSpawn();
-						if (loc == null) return;
+						if (loc == null) {
+							p.sendMessage(ChatColor.RED + "Sorry, an error has occurred! Please contact staff!");
+							plugin.arena.waiting.remove(p);
+							continue;
+						}
 						p.teleport(loc);
 					} else {
 						Location spawn = plugin.arena.getSpawn();
