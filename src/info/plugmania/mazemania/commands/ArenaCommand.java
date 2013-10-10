@@ -301,12 +301,12 @@ public class ArenaCommand {
 					plugin.arena.playing.add(p);
 	
 					if (plugin.mainConf.getBoolean("randomSpawn", true)) {
-						p.teleport(plugin.arena.getRandomSpawn());
+						Location loc = plugin.arena.getRandomSpawn();
+						if (loc == null) return;
+						p.teleport(loc);
 					} else {
 						Location spawn = plugin.arena.getSpawn();
-						if (spawn == null) {
-							return;
-						}
+						if (spawn == null) return;
 						p.teleport(spawn);
 					}
 					plugin.arena.RefreshLoadout(p);

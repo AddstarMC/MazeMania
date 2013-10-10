@@ -215,7 +215,11 @@ public class Arena {
 	
 	public Location getRandomSpawn() {
 		int ran = (int) (Math.random() * spawns.size());
-		return spawns.get(ran);
+		Location loc = spawns.get(ran);
+		if (loc == null) {
+			Util.debug("ERROR: Random spawn is null! (" + ran + " of " + spawns.size() + ")");
+		}
+		return loc;
 	}
 	
 	/*
