@@ -123,6 +123,11 @@ public class Util {
 		String[] parts = input.split(",");
 
 		World world = plugin.getServer().getWorld(parts[0]);
+		if (world == null) {
+			Util.debug("WARNING: Str2Loc() world was invalid: " + input);
+			return null;
+		}
+		
 		loc = new Location(world,
 				Double.parseDouble(parts[1]),
 				Double.parseDouble(parts[2]),
