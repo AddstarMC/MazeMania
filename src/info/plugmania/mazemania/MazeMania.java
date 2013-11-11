@@ -35,9 +35,11 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MazeMania extends JavaPlugin {
+	public static MazeMania instance;
+	
 	public YamlConfiguration mainConf;
 
-	public boolean debug = false;
+	public boolean debug = true;
 	//public boolean noDeath = true;
 
 	private final ConfigUtil configUtil;
@@ -64,6 +66,8 @@ public class MazeMania extends JavaPlugin {
 	}
 
 	public void onEnable() {
+		instance = this;
+		
 		Util.pdfFile = getDescription();
 		Util.log("----------- " + Util.pdfFile.getName() + " has been enabled" + " -----------");
 		Util.log(Util.pdfFile.getName() + " Version " + Util.pdfFile.getVersion());

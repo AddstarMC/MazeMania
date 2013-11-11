@@ -36,8 +36,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 public class Util {
-
-	static MazeMania plugin;
+	static MazeMania plugin = MazeMania.instance;
 
 	public static Logger log = Logger.getLogger("Minecraft");
 	public static PluginDescriptionFile pdfFile;

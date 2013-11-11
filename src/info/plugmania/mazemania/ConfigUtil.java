@@ -74,7 +74,7 @@ public class ConfigUtil {
 				}
 			} catch (Exception e) {
 				Util.log("Failed to create plugin folder");
-				Util.debug(e.getMessage());
+				Util.log(e.getMessage());
 			}
 		}
 

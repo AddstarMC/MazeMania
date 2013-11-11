@@ -133,7 +133,7 @@ public class Arena {
 				}
 			}
 		}
-		Util.debug("Loaded " + spawns.size() + " spawns.");
+		Util.log("Loaded " + spawns.size() + " spawns.");
 	}
 	
 	public void addSpawn(Location loc) {
@@ -214,10 +214,14 @@ public class Arena {
 	}
 	
 	public Location getRandomSpawn() {
+		if (spawns.size() == 0) {
+			Util.log.warning("ERROR: Spawn list is empty!");
+			return null;
+		}
 		int ran = (int) (Math.random() * spawns.size());
 		Location loc = spawns.get(ran);
 		if (loc == null) {
-			Util.debug("ERROR: Random spawn is null! (" + ran + " of " + spawns.size() + ")");
+			Util.log.warning("ERROR: Random spawn is null! (" + ran + " of " + spawns.size() + ")");
 		}
 		return loc;
 	}

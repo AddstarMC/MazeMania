@@ -389,7 +389,13 @@ public class ArenaCommand {
 			plugin.arena.playing.add(p);
 
 			if (plugin.mainConf.getBoolean("randomSpawn", true)) {
-				p.teleport(plugin.arena.getRandomSpawn());
+				Location l = plugin.arena.getRandomSpawn();
+				if (l == null) {
+					p.sendMessage(ChatColor.RED + "Sorry, an error has occurred! Please contact staff!");
+					Util.log.warning("Null random spawn selected for " + p.getName() + "!");
+					l = plugin.arena.getLobby();
+				}
+				p.teleport(l);
 			} else {
 				Location spawn = plugin.arena.getSpawn();
 				if (spawn == null) {
