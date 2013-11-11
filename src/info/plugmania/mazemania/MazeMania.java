@@ -98,7 +98,7 @@ public class MazeMania extends JavaPlugin {
 
 		registerCommands();
 
-		Util.log("Succefully loaded");
+		Util.log("Successfully loaded");
 	}
 
 	private void registerCommands() {
