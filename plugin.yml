@@ -2,7 +2,7 @@ name: MazeMania
 author: PlugMania
 main: info.plugmania.mazemania.MazeMania
 version: ${project.version}
-softdepend: [Vault]
+softdepend: [Vault, Multiverse-Core, My Worlds]
 description: MazeMania is a mix of arena, added a bit of mobarena and spiced with some sweet thinking of PlugMania devs.
 commands:
   maze:
