@@ -261,7 +261,7 @@ public class Arena {
 		boolean finish = false;
 		int count = 0;
 
-		//Util.log.info("Starting getRandomLocation() loop: dist(" + d + "), location("+ s.toString() + ")");
+		//Util.log("Starting getRandomLocation() loop: dist(" + d + "), location("+ s.toString() + ")");
 		do {
 			count++;
 			dist = Math.random() * d;
@@ -269,7 +269,7 @@ public class Arena {
 			x = s.getBlockX() + (dist - d) * Math.cos(deg);
 			z = s.getBlockZ() + (dist - d) * Math.cos(deg);
 			b = s.getWorld().getBlockAt((int) x, s.getBlockY(), (int) z);
-			//Util.log.info("  loop: dist(" + dist + "), deg(" + deg + "), location(" + b.getLocation().toString() + ")");
+			//Util.log("  loop: dist(" + dist + "), deg(" + deg + "), location(" + b.getLocation().toString() + ")");
 			if (b.getType().equals(Material.AIR)
 					&& b.getRelative(BlockFace.UP).getType().equals(Material.AIR)
 					&& isInArena(b.getLocation())) {
@@ -324,7 +324,7 @@ public class Arena {
 
 	public void removeAllMobs() {
 		// Remove all zombie entities located in the maze arena (just to make it more fair)
-		Util.log.info("Removing all Maze mobs...");
+		Util.log("Removing all Maze mobs...");
 		
 		int count = 0;
 		Location spawn = plugin.arena.getSpawn();
@@ -336,7 +336,7 @@ public class Arena {
 			if (e.getType().equals(EntityType.SKELETON)) { e.remove(); count++; }
 			if (e.getType().equals(EntityType.CREEPER)) { e.remove(); count++; }
 		}
-		Util.log.info("Removed " + count + " mobs from maze arena");
+		Util.log("Removed " + count + " mobs from maze arena");
 	}
 
 	public int countAllMobs() {
@@ -433,7 +433,7 @@ public class Arena {
 			if (plugin.arena.waiting.isEmpty()) {
 				Bukkit.getScheduler().cancelTask(plugin.mazeCommand.arenaCommand.scheduleId);
 				plugin.mazeCommand.arenaCommand.scheduleActive = false;
-				Util.log.info(Util.formatBroadcast("Game cancelled, all waiting players left!"));
+				Util.log("Game cancelled, all waiting players left!");
 			}
 			
 			// Check that we still have enough players (people can leave during countdown)

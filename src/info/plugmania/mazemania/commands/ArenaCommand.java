@@ -134,6 +134,7 @@ public class ArenaCommand {
 
 	public void leaveMatch(Player player) {
 		if (plugin.arena.playing.contains(player) || plugin.arena.waiting.contains(player)) {
+			Util.debug("Player " + player.getName() + " has left the match.");
 
 			if (plugin.arena.playing.contains(player)) {
 				plugin.arena.playing.remove(player);
@@ -150,6 +151,7 @@ public class ArenaCommand {
 				Location back = null;
 				if (plugin.arena.store.containsKey(player)) {
 					PlayerStore ps = plugin.arena.store.get(player);
+					plugin.arena.store.remove(player);
 	
 					player.getInventory().setContents(ps.inv.getContents());
 					back = ps.previousLoc;
@@ -169,16 +171,16 @@ public class ArenaCommand {
 				}
 
 				if (back == null) {
-					Util.log.info("Back was empty for " + player.getName() + "!");
+					Util.log("Back was empty for " + player.getName() + "!");
 					player.sendMessage(Util.formatMessage("Your previous location was not found."));
 					player.teleport(player.getWorld().getSpawnLocation());
 				} else {
-					Util.log.info("Back: " + back.toString());
+					Util.log("Back: " + back.toString());
 					player.teleport(back);
 				}
 			}
 		} else {
-			Util.log.info("Player NOT in match!!");
+			Util.log("Player NOT in match!!");
 		}
 	}
 
@@ -224,14 +226,14 @@ public class ArenaCommand {
 				@Override
 				public void run() {
 					if (!plugin.arena.gameActive) {
-						Util.log.info("Game no longer active. Stopping mob spawn timer.");
+						Util.log("Game no longer active. Stopping mob spawn timer.");
 						Bukkit.getScheduler().cancelTask(scheduleMobId);
 						return;
 					}
 					int arenaMobs = plugin.arena.countAllMobs(); 
-					//Util.log.info("Arena mobs: " + arenaMobs);
+					//Util.log("Arena mobs: " + arenaMobs);
 					if (arenaMobs <= plugin.mainConf.getInt("maxMobs", 15)) {
-						//Util.log.info("Spawning more mobs!");
+						//Util.log("Spawning more mobs!");
 						for (Player p : plugin.arena.playing) {
 							Location l = plugin.arena.getRandomLocation(p.getLocation(), 10);
 							int ran = (int) (Math.random() * 100);
@@ -249,7 +251,7 @@ public class ArenaCommand {
 							}
 						}
 					} else {
-						//Util.log.info("Too many mobs!");
+						//Util.log("Too many mobs!");
 					}
 				}
 			}, mOut * 20L, mOut * 20L);
@@ -261,7 +263,7 @@ public class ArenaCommand {
 				@Override
 				public void run() {
 					if (!plugin.arena.gameActive) {
-						Util.log.info("Game no longer active. Stopping game timer.");
+						Util.log("Game no longer active. Stopping game timer.");
 						Bukkit.getScheduler().cancelTask(scheduleGameTimer);
 						return;
 					}
@@ -280,7 +282,7 @@ public class ArenaCommand {
 							Util.broadcastInside(timetext);
 						}
 					} else {
-						Util.log.info("Sorry, you ran out of time and the game has been aborted.");
+						Util.log("Sorry, you ran out of time and the game has been aborted.");
 						Bukkit.getScheduler().cancelTask(scheduleGameTimer);
 						abortGame();
 					}
@@ -364,7 +366,7 @@ public class ArenaCommand {
 		ps.hunger = p.getFoodLevel();
 		ps.armour = p.getInventory().getArmorContents();
 
-		//Util.log.info("Set previousLoc: " + ps.previousLoc.toString());
+		//Util.log("Set previousLoc: " + ps.previousLoc.toString());
 		
 		p.setGameMode(GameMode.SURVIVAL);
 		p.getInventory().clear();

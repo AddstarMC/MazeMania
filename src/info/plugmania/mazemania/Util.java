@@ -18,6 +18,8 @@
 
 package info.plugmania.mazemania;
 
+import info.plugmania.mazemania.helpers.PlayerStore;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -101,6 +104,24 @@ public class Util {
 		for(Player p:plugin.arena.playing) {
 			p.sendMessage(ChatColor.BLUE + "[MM] " + msg);
 		}
+	}
+	
+	public static String getPlayerNames(List<Player> players) {
+		List<String> names = new ArrayList<String>();
+		
+		for (Player p: players) {
+			names.add(p.getName());
+		}
+		return StringUtils.join(names, ", ");
+	}
+	
+	public static String getStorePlayerNames(HashMap<Player, PlayerStore> ps) {
+		List<String> names = new ArrayList<String>();
+		
+		for (Player p: ps.keySet()) {
+			names.add(p.getName());
+		}
+		return StringUtils.join(names, ", ");
 	}
 	
 	public static String Loc2Str(Location loc) {

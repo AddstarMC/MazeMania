@@ -64,7 +64,6 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-		if (event.isCancelled()) return; 
 		if (event.getMessage().startsWith("/maze") || event.getMessage().startsWith("/op")) return;
 		if (event.getPlayer().isOp()) return;
 		if (!plugin.arena.playing.contains(event.getPlayer()) && !plugin.arena.waiting.contains(event.getPlayer())) return;
@@ -181,27 +180,7 @@ public class PlayerListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (plugin.arena.store.containsKey(player)) {
-			Util.log.info("PlayerJoinEvent: Player inside arena");
-
-			Location back = plugin.arena.restorePlayer(player);
-			if (back == null) {
-				player.sendMessage(Util.formatMessage("Your previous location was not found."));
-			} else {
-				player.teleport(back);
-			}
-			plugin.arena.store.remove(player);
-		}
-		
-		if (plugin.arena.isInArena(player.getLocation())) {
-			player.teleport(player.getWorld().getSpawnLocation());
-		}
-	}
-
-	@EventHandler
-	public void onPlayerKick(PlayerKickEvent event) {
-		Player player = event.getPlayer();
-		if (plugin.arena.store.containsKey(player)) {
-			Util.log.info("PlayerJoinEvent: Player inside arena");
+			Util.log("PlayerJoinEvent: Player inside arena");
 
 			Location back = plugin.arena.restorePlayer(player);
 			if (back == null) {
@@ -219,7 +198,6 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(ignoreCancelled=true)
 	public void onChestInteract(PlayerInteractEvent event) {
-		if (event.isCancelled()) return;
 		if (!plugin.arena.gameActive) return;
 
 		Player player = event.getPlayer();
@@ -262,7 +240,6 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (event.isCancelled()) return;
 		if (!plugin.arena.gameActive) return;
 
 		Player player = event.getPlayer();
@@ -309,7 +286,6 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if (event.isCancelled()) return;
 		if (!plugin.arena.gameActive) return;
 
 		if (!plugin.mainConf.getString("mode", "collectItems").equalsIgnoreCase("collectItems")) return;
@@ -376,29 +352,29 @@ public class PlayerListener implements Listener {
 
 		// Don't bother checking if the chest/inv was empty to begin with
 		if (before == null) {
-			//Util.log.info("[InventoryClose] before is NULL");
+			//Util.log("[InventoryClose] before is NULL");
 			return;
 		}
 		
 		String looted = plugin.util.createDifferenceString(plugin.util.compressInventory(before), plugin.util.compressInventory(after));
-		//Util.log.info("[InventoryClose] before: " + plugin.util.compressInventory(before));
-		//Util.log.info("[InventoryClose] after: " + plugin.util.compressInventory(after));
-		//Util.log.info("[InventoryClose] looted: " + looted);
+		//Util.log("[InventoryClose] before: " + plugin.util.compressInventory(before));
+		//Util.log("[InventoryClose] after: " + plugin.util.compressInventory(after));
+		//Util.log("[InventoryClose] looted: " + looted);
 		
 		// Find the material type and collect mode
 		Material mat = Material.matchMaterial(plugin.mainConf.getString("itemToCollect", "GOLD_NUGGET"));
 		//int matid = mat.getId();
 		Boolean collectMode = plugin.mainConf.getString("mode", "collectItems").equalsIgnoreCase("collectItems");
-		//Util.log.info("Material required: " + mat.toString() + " (" + matid + ")");
-		//Util.log.info("collectMode: " + collectMode);
+		//Util.log("Material required: " + mat.toString() + " (" + matid + ")");
+		//Util.log("collectMode: " + collectMode);
 
 		// Check if the item has been collected from the chest
 		Boolean inBefore = plugin.util.compressInventory(before).containsKey(mat.toString());
 		Boolean inAfter  = plugin.util.compressInventory(after).containsKey(mat.toString());
 		Boolean hasCollected = (inBefore && !inAfter);
-		//Util.log.info("inBefore: " + inBefore);
-		//Util.log.info("inAfter: " + inAfter);
-		//Util.log.info("hasCollected: " + hasCollected);
+		//Util.log("inBefore: " + inBefore);
+		//Util.log("inAfter: " + inAfter);
+		//Util.log("hasCollected: " + hasCollected);
 		
 		// Check if the required item was collected
 		if(collectMode && hasCollected) {
@@ -406,7 +382,7 @@ public class PlayerListener implements Listener {
 			int found = plugin.util.compressInventory(pinv).get(mat.toString());
 			int needed = plugin.mainConf.getInt("itemAmountToCollect", 10);
 			int remain = (needed - found);
-			//Util.log.info("[InventoryClose] Found " + found + " of " + needed + " with " + remain + " left");
+			//Util.log("[InventoryClose] Found " + found + " of " + needed + " with " + remain + " left");
 			Util.broadcastInside(ChatColor.GOLD + event.getPlayer().getName() + ChatColor.BLUE + " has found " + ChatColor.GOLD + found + ChatColor.BLUE + " of " + ChatColor.GOLD + needed + " " + ChatColor.YELLOW + mat.toString());
 			if (remain == 0) {
 				Player p = (Player) event.getPlayer();
@@ -429,7 +405,6 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(ignoreCancelled=true)
 	public void onTriggers(PlayerMoveEvent event) {
-		if (event.isCancelled()) return;
 		if (!plugin.arena.gameActive) return;
 
 		if (event.getFrom().getBlockX() != event.getTo().getBlockX()
