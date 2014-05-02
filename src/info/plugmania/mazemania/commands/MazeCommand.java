@@ -18,16 +18,11 @@
 
 package info.plugmania.mazemania.commands;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-
 import info.plugmania.mazemania.MazeMania;
 import info.plugmania.mazemania.Util;
 import info.plugmania.mazemania.helpers.Effects;
 import info.plugmania.mazemania.helpers.Trigger;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -150,9 +145,9 @@ public class MazeCommand implements CommandExecutor {
 					}
 				} else if (args[0].equalsIgnoreCase("list")) {
 					if (!plugin.util.hasPermMsg(player, "list")) return true;
-					sender.sendMessage(Color.GREEN + "Waiting: " + Color.YELLOW + Util.getPlayerNames(plugin.arena.waiting));
-					sender.sendMessage(Color.GREEN + "Playing: " + Color.YELLOW + Util.getPlayerNames(plugin.arena.playing));
-					sender.sendMessage(Color.GREEN + "Stored: " + Color.YELLOW + Util.getStorePlayerNames(plugin.arena.store));
+					sender.sendMessage(ChatColor.GREEN + "Waiting: " + ChatColor.YELLOW + Util.getPlayerNames(plugin.arena.waiting));
+					sender.sendMessage(ChatColor.GREEN + "Playing: " + ChatColor.YELLOW + Util.getPlayerNames(plugin.arena.playing));
+					sender.sendMessage(ChatColor.GREEN + "Stored: " + ChatColor.YELLOW + Util.getStorePlayerNames(plugin.arena.store));
 				} else if (args[0].equalsIgnoreCase("about") || args[0].equalsIgnoreCase("info")) {
 					sender.sendMessage(Util.formatMessage("---------------------- " + Util.pdfFile.getName() + " ----------------------"));
 					sender.sendMessage(Util.formatMessage(plugin.getName() + " developed by " + Util.pdfFile.getAuthors().get(0)));
