@@ -203,7 +203,7 @@ public class ArenaCommand {
 			}
 
 			// Cancel the timer
-			Bukkit.getScheduler().cancelTask(plugin.mazeCommand.arenaCommand.scheduleId);
+			Bukkit.getScheduler().cancelTask(scheduleId);
 			scheduleActive = false;
 
 			// Check if we have enough players
@@ -238,7 +238,7 @@ public class ArenaCommand {
 							Location l = plugin.arena.getRandomLocation(p.getLocation(), 10);
 							int ran = (int) (Math.random() * 100);
 							if (ran >= 95) {
-								LivingEntity ent = (LivingEntity) p.getWorld().spawnEntity(l, EntityType.SPIDER);
+								p.getWorld().spawnEntity(l, EntityType.SPIDER);
 							}
 							else if (ran >= 80) {
 								LivingEntity ent = (LivingEntity) p.getWorld().spawnEntity(l, EntityType.SKELETON);
