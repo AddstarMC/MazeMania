@@ -91,7 +91,7 @@ public class Util {
 	}
 	
 	public static void broadcastInside(String msg) {
-		Util.log("broadcastInside(" + plugin.arena.playing.size() + "/" + plugin.arena.waiting.size() + "): " + msg);
+		Util.log("broadcastInside(" + plugin.arena.playing.size() + "/" + plugin.arena.waiting.size() + "): " + ChatColor.stripColor(msg));
 		for(Player p:plugin.arena.playing) {
 			p.sendMessage(ChatColor.BLUE + "[" + ChatColor.AQUA + "Maze" + ChatColor.BLUE + "] " + msg);
 		}
