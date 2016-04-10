@@ -30,6 +30,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -355,7 +356,7 @@ public class ArenaCommand {
 	private void joinMatch(Player p) {
 		plugin.arena.store.put(p, new PlayerStore());
 
-		Inventory inv = Bukkit.createInventory(null, p.getInventory().getSize());
+		Inventory inv = Bukkit.createInventory(null, InventoryType.PLAYER);
 		inv.setContents(p.getInventory().getContents());
 
 		PlayerStore ps = plugin.arena.store.get(p);
