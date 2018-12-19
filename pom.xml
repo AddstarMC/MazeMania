@@ -2,9 +2,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>MazeMania</groupId>
   <artifactId>MazeMania</artifactId>
-  <version>1.4.0-b${env.BUILD_NUMBER}</version>
+  <version>1.4.0</version>
   <name>MazeMania</name>
-
+  <properties>
+    <spigot.api.version>1.13</spigot.api.version>
+    <spigot.version>${spigot.api.version}.2-R0.1-SNAPSHOT</spigot.version>
+    <plugin.version>${project.version}-${build.number}</plugin.version>
+    <build.number/>
+  </properties>
   <repositories>
     <!-- For spigot -->
     <repository>
@@ -14,10 +19,10 @@
       <snapshots><enabled>true</enabled></snapshots>
     </repository>
 
-    <!-- For Vault -->
     <repository>
-      <id>theyeticave</id>
-      <url>http://nexus.theyeticave.net/content/repositories/pub_releases/</url>
+      <id>vault-repo</id>
+      <name>Public Releases</name>
+      <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
     </repository>
 
     <!-- Other repositories -->
@@ -50,22 +55,17 @@
   <dependencies>
     <!-- Spigot -->
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot</artifactId>
-      <version>1.9-R0.1-SNAPSHOT</version>
+      <groupId>org.bukkit</groupId>
+      <artifactId>bukkit</artifactId>
+      <version>${spigot.version}</version>
     </dependency>
     
     <!-- Used for economy stuff -->
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
-      <artifactId>Vault</artifactId>
-      <version>1.4.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.bukkit</groupId>
-          <artifactId>bukkit</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>VaultAPI</artifactId>
+      <version>1.7</version>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
@@ -90,8 +90,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
     </plugins>

@@ -244,11 +244,11 @@ public class ArenaCommand {
 							else if (ran >= 80) {
 								LivingEntity ent = (LivingEntity) p.getWorld().spawnEntity(l, EntityType.SKELETON);
 								ent.getEquipment().setItemInHand(new ItemStack(Material.BOW));
-								ent.getEquipment().setBoots(new ItemStack(Material.GOLD_BOOTS));
+								ent.getEquipment().setBoots(new ItemStack(Material.GOLDEN_BOOTS));
 							}
 							else {
 								LivingEntity ent = (LivingEntity) p.getWorld().spawnEntity(l, EntityType.ZOMBIE);
-								ent.getEquipment().setBoots(new ItemStack(Material.GOLD_BOOTS));
+								ent.getEquipment().setBoots(new ItemStack(Material.GOLDEN_BOOTS));
 							}
 						}
 					} else {

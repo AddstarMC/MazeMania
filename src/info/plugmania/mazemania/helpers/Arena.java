@@ -357,27 +357,27 @@ public class Arena {
 		PlayerInventory inv = p.getInventory();
 		Material mat;
 		
-		for (Short i:plugin.mainConf.getShortList("startingItems")) {
+		for (String i:plugin.mainConf.getStringList("startingItems")) {
 			mat = Material.getMaterial(i);
 			if (mat != null) {
 				// Refresh the loadout by first removing each starting item if it exists
 				if (inv.contains(mat)) {
 					int slot = inv.first(mat);
-					inv.remove(slot);
-					inv.setItem(slot, new ItemStack(i));
+					inv.setItem(slot,null);
+					inv.setItem(slot, new ItemStack(mat,1));
 				} else {
 					// Auto equip armour (if necessary)
 					if (mat.name().contains("HELMET")) {
-						p.getInventory().setHelmet(new ItemStack(i));
+						p.getInventory().setHelmet(new ItemStack(mat));
 					} else if (mat.name().contains("CHESTPLATE")) {
-						p.getInventory().setChestplate(new ItemStack(i));
+						p.getInventory().setChestplate(new ItemStack(mat));
 					} else if (mat.name().contains("LEGGINGS")) {
-						p.getInventory().setLeggings(new ItemStack(i));
+						p.getInventory().setLeggings(new ItemStack(mat));
 					} else if (mat.name().contains("BOOTS")) {
-						p.getInventory().setBoots(new ItemStack(i));
+						p.getInventory().setBoots(new ItemStack(mat));
 					} else {
 						// Add item to inventory
-						p.getInventory().addItem(new ItemStack(i));
+						p.getInventory().addItem(new ItemStack(mat));
 					}
 				}
 			}

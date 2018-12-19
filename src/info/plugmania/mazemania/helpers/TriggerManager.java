@@ -44,7 +44,7 @@ public class TriggerManager {
 	
 	public Trigger getTrigger(Material block){
 		for(Trigger t:triggerList){
-			if(t.blockID==block.getId()){
+			if(t.material==block){
 				return t;
 			}
 		}
@@ -54,7 +54,7 @@ public class TriggerManager {
 	public void applyTrigger(Material block,MazeMania instance,Player p){
 		try{
 			for(Trigger t:triggerList){
-				if(t.blockID==block.getId()){
+				if(t.material==block){
 					t.apply(p, instance);
 				}
 			}
@@ -66,7 +66,7 @@ public class TriggerManager {
 	public void removeTrigger(Material block){
 		try{
 		for(Trigger t:triggerList){
-			if(t.blockID==block.getId()){
+			if(t.material==block){
 				triggerList.remove(t);
 			}
 		}
@@ -77,7 +77,7 @@ public class TriggerManager {
 	
 	public boolean isTrigger(Material block){
 		for(Trigger t:triggerList){
-			if(t.blockID==block.getId()){
+			if(t.material==block){
 				return true;
 			}
 		}
@@ -90,8 +90,8 @@ public class TriggerManager {
 	
 	public ConfigurationSection saveTriggers(ConfigurationSection csec){
 		for (Trigger t:triggerList){
-			csec.createSection(String.valueOf(t.blockID));
-			csec.set(String.valueOf(t.blockID), t.asConfigSection(csec.getConfigurationSection(String.valueOf(t.blockID))));
+			csec.createSection(String.valueOf(t.material));
+			csec.set(String.valueOf(t.material), t.asConfigSection(csec.getConfigurationSection(String.valueOf(t.material))));
 		}
 		return csec;
 	}

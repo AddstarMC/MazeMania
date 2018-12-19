@@ -114,7 +114,7 @@ public class MazeCommand implements CommandExecutor {
 						sender.sendMessage(ChatColor.DARK_GRAY + "" + ChatColor.ITALIC + "-------------------------------------------------");
 						sender.sendMessage(Util.formatMessage("Currently defined events: [Block] [Event] [Arg]"));
 						for (Trigger t:plugin.TriggerManager.getTriggers()){
-							sender.sendMessage(Util.formatMessage(Material.getMaterial(t.blockID).name() + " " + t.effect + " " + t.arguments));
+							sender.sendMessage(Util.formatMessage(t.material.name() + " " + t.effect + " " + t.arguments));
 						}
 					}else if(args.length==2){
 						Material mat = Material.matchMaterial(args[1]);
@@ -130,7 +130,7 @@ public class MazeCommand implements CommandExecutor {
 							sender.sendMessage("Invalid block type!");
 							return true;
 						}
-						plugin.TriggerManager.addTrigger(new Trigger(mat.getId(), args[2], ""));
+						plugin.TriggerManager.addTrigger(new Trigger(mat, args[2], ""));
 						sender.sendMessage("Added trigger for '" + args[1] + "'.");
 					}else if(args.length>=4){
 						Material mat = Material.matchMaterial(args[1]);
@@ -138,7 +138,7 @@ public class MazeCommand implements CommandExecutor {
 							sender.sendMessage("Invalid block type!");
 							return true;
 						}
-						plugin.TriggerManager.addTrigger(new Trigger(mat.getId(), args[2], plugin.util.join(args, " ", 3)));
+						plugin.TriggerManager.addTrigger(new Trigger(mat, args[2], plugin.util.join(args, " ", 3)));
 						sender.sendMessage("Added trigger for '" + args[1] + "'.");
 					}else{
 						

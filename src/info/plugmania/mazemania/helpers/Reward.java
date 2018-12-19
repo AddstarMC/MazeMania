@@ -75,6 +75,6 @@ public class Reward {
 			p.sendMessage(Util.formatMessage(ChatColor.RED + "Vault not detected, could not reward money"));
 			return;
 		}
-		plugin.econ.economy.depositPlayer(p.getName(), amount);
+		plugin.econ.economy.depositPlayer(p, amount);
 	}
 }
