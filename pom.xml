@@ -2,11 +2,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>MazeMania</groupId>
   <artifactId>MazeMania</artifactId>
-  <version>1.4.0</version>
+  <version>1.5.0</version>
   <name>MazeMania</name>
   <properties>
-    <spigot.api.version>1.13</spigot.api.version>
-    <spigot.version>${spigot.api.version}.2-R0.1-SNAPSHOT</spigot.version>
+    <spigot.api.version>1.15</spigot.api.version>
+    <spigot.version>${spigot.api.version}-R0.1-SNAPSHOT</spigot.version>
     <plugin.version>${project.version}-${build.number}</plugin.version>
     <build.number/>
   </properties>
@@ -55,9 +55,10 @@
   <dependencies>
     <!-- Spigot -->
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot</artifactId>
       <version>${spigot.version}</version>
+      <scope>provided</scope>
     </dependency>
     
     <!-- Used for economy stuff -->
@@ -66,6 +67,16 @@
       <artifactId>VaultAPI</artifactId>
       <version>1.7</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.bukkit</groupId>
+          <artifactId>bukkit</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.bukkit</groupId>
+          <artifactId>craftbukkit</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>

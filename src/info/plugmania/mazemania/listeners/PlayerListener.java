@@ -50,6 +50,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -195,7 +196,8 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler(ignoreCancelled=true)
+	// Custom chest inventory - Cancel player opening a chest and open a fake inventory instead
+	@EventHandler(ignoreCancelled=true, priority=EventPriority.LOWEST)
 	public void onChestInteract(PlayerInteractEvent event) {
 		if (!plugin.arena.gameActive) return;
 
@@ -205,38 +207,45 @@ public class PlayerListener implements Listener {
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			Block b = event.getClickedBlock();
 			if (b.getType().equals(Material.CHEST)) {
+				Util.debug("[onChestInteract] Attempting to open fake chest...");
 				event.setCancelled(true);
+				InventoryView iv = player.getOpenInventory();
+				if (iv != null) {
+					Util.debug("[onChestInteract] Inventory already open, closing it!");
+					iv.close();
+				}
 
+				Inventory inv;
 				PlayerStore ps = plugin.arena.store.get(player);
 				if (ps.chests.containsKey(b.getLocation())) {
-					player.openInventory(ps.chests.get(b.getLocation()));
+					// Chest has been open by this player before
+					//Util.debug("  [chest] Previously opened player chest found...");
+					inv = ps.chests.get(b.getLocation());
+					//Util.debug("  Chest inv contents: " + plugin.util.compressInventory(inv.getContents()));
+					player.openInventory(inv);
 				} else {
+					// Chest has not been open by this player yet
+					//Util.debug("  [chest] New chest found - creating contents...");
 					Chest chest = (Chest) b.getState();
-					Inventory inv = Bukkit.createInventory(null, chest.getInventory().getSize());
+					inv = Bukkit.createInventory(null, chest.getInventory().getSize(), ChatColor.BLUE + "Maze Chest");
 					inv.setContents(chest.getInventory().getContents());
+					//Util.debug("  Chest inv contents: " + plugin.util.compressInventory(inv.getContents()));
 					ps.chests.put(b.getLocation(), inv);
-					player.openInventory(ps.chests.get(b.getLocation()));
+					player.openInventory(inv);
 				}
-				ps.openChest=ps.chests.get(b.getLocation()).getContents();
 
+				// We need to deep clone the inventory into the "open chest" inventory
+				ItemStack[] openChest = new ItemStack[inv.getContents().length];
+				for (int x = 0; x < inv.getContents().length; x++) {
+					if (inv.getContents()[x] == null) continue;
+					openChest[x] = inv.getContents()[x].clone();
+				}
+				ps.openChest = openChest;
 			}
 		}
 	}
 
-/*
- * Handled by WorldGuard
- *
-	@EventHandler
-	public void onItemDrop(PlayerDropItemEvent event) {
-		if (event.isCancelled()) return;
-		if (!plugin.arena.gameActive) return;
-
-		Player player = event.getPlayer();
-		if (plugin.arena.playing.contains(player))
-			event.setCancelled(true);
-	}
-*/
-	
+	// Win condition - Handle when player clicks the gold block
 	@EventHandler(ignoreCancelled=true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (!plugin.arena.gameActive) return;
@@ -336,7 +345,8 @@ public class PlayerListener implements Listener {
 			}
 		}
 	}
-	
+
+	//
 	@EventHandler(ignoreCancelled=true)
 	public void InventoryClose(InventoryCloseEvent event) {
 		if (!plugin.arena.gameActive) return;
@@ -351,30 +361,43 @@ public class PlayerListener implements Listener {
 		ItemStack[] after=event.getInventory().getContents();
 
 		// Don't bother checking if the chest/inv was empty to begin with
-		if (before == null) {
-			//Util.log("[InventoryClose] before is NULL");
+		if ((before == null) || (before.length == 0)) {
+			Util.log("[InventoryClose] before is NULL or Zero length");
+			return;
+		}
+
+		// We also have to check for AIR item stacks now
+		Boolean empty = true;
+		for (ItemStack is : before) {
+			if ((is != null) && (is.getType() != Material.AIR)) {
+				empty = false;
+				break;
+			}
+		}
+		if (empty) {
+			Util.debug("[InventoryClose] before is AIR/empty");
 			return;
 		}
 		
-		String looted = plugin.util.createDifferenceString(plugin.util.compressInventory(before), plugin.util.compressInventory(after));
-		//Util.log("[InventoryClose] before: " + plugin.util.compressInventory(before));
-		//Util.log("[InventoryClose] after: " + plugin.util.compressInventory(after));
-		//Util.log("[InventoryClose] looted: " + looted);
+		HashMap<String, Integer> cBefore =  plugin.util.compressInventory(before);
+		HashMap<String, Integer> cAfter =  plugin.util.compressInventory(after);
+
+		String looted = plugin.util.createDifferenceString(cBefore, cAfter);
+		Util.debug("[InventoryClose] before: " + cBefore);
+		Util.debug("[InventoryClose] after: " + cAfter);
+		Util.debug("[InventoryClose] looted: " + looted);
 		
 		// Find the material type and collect mode
 		Material mat = Material.matchMaterial(plugin.mainConf.getString("itemToCollect", "GOLD_NUGGET"));
-		//int matid = mat.getId();
 		Boolean collectMode = plugin.mainConf.getString("mode", "collectItems").equalsIgnoreCase("collectItems");
-		//Util.log("Material required: " + mat.toString() + " (" + matid + ")");
-		//Util.log("collectMode: " + collectMode);
 
 		// Check if the item has been collected from the chest
-		Boolean inBefore = plugin.util.compressInventory(before).containsKey(mat.toString());
-		Boolean inAfter  = plugin.util.compressInventory(after).containsKey(mat.toString());
+		Boolean inBefore = cBefore.containsKey(mat.toString());
+		Boolean inAfter  = cAfter.containsKey(mat.toString());
 		Boolean hasCollected = (inBefore && !inAfter);
-		//Util.log("inBefore: " + inBefore);
-		//Util.log("inAfter: " + inAfter);
-		//Util.log("hasCollected: " + hasCollected);
+		//Util.debug("inBefore: " + inBefore);
+		//Util.debug("inAfter: " + inAfter);
+		//Util.debug("hasCollected: " + hasCollected);
 		
 		// Check if the required item was collected
 		if(collectMode && hasCollected) {
@@ -421,41 +444,4 @@ public class PlayerListener implements Listener {
 			}
 		}
 	}
-
-/*
- * Handled by WorldGuard
- *
-	@EventHandler
-	public void onBlockBreak(BlockBreakEvent event) {
-		if (event.isCancelled()) return;
-		if (!plugin.arena.gameActive) return;
-		if (!plugin.arena.playing.contains(event.getPlayer())) return;
-		if (!plugin.arena.isInArena(event.getBlock().getLocation())) return;
-		event.setCancelled(true);
-	}
-
-	@EventHandler
-	public void onPlaceBreak(BlockPlaceEvent event) {
-		if (event.isCancelled()) return;
-		if (!plugin.arena.gameActive) return;
-		if (!plugin.arena.playing.contains(event.getPlayer())) return;
-		if (!plugin.arena.isInArena(event.getBlock().getLocation())) return;
-		event.setCancelled(true);
-	}
-*/
-
-/*
- * I dont use this.. so there's no need for wasted events!
- *
-	@EventHandler
-	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		if (!plugin.arena.gameActive) return;
-		if(!plugin.arena.playing.contains(event.getPlayer())) return;
-		if(!plugin.mainConf.getBoolean("useSeparatePlayerChat", false)) return;
-		event.setCancelled(true);
-
-		Util.chatInside(ChatColor.GOLD + "<" + event.getPlayer().getName() + "> "+ ChatColor.WHITE + event.getMessage());
-	}
-*/	
-
 }

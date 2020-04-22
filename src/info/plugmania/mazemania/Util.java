@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -272,12 +273,14 @@ public class Util {
 	 */
 	public HashMap<String,Integer> compressInventory(ItemStack[] inventory) {
 		HashMap<String,Integer> items = new HashMap<String,Integer>();
+		//Util.debug("Compressing inventory (" + inventory.length + " items):");
 		if (inventory == null) { return null; }
 		for (ItemStack item : inventory) {
-			if (item == null) continue;
-			String iString = item.getType().toString();
-			if (items.containsKey(iString)) items.put(iString, items.get(iString) + item.getAmount());
-			else items.put(iString, item.getAmount());
+			if ((item == null) || (item.getType() == Material.AIR)) continue;
+			String type = item.getType().toString();
+			//Util.debug("  Item " + item.getAmount() + "x " + type);
+			if (items.containsKey(type)) items.put(type, items.get(type) + item.getAmount());
+			else items.put(type, item.getAmount());
 		}
 		return items;
 	}
